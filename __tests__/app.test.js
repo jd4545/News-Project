@@ -29,16 +29,49 @@ describe("News app",()=>{
             })
         })
 })
-describe("Error testing", () => {
-    describe("404: user error", () => {
-        test("server responds with 404 error when invalid path entered", () => {
-          return request(app)
-          .get("/api/bad-endpoint")
-          .expect(404)
-          .then(({body}) => {
-            expect(body.msg).toBe("invalid path");
-          })
+    describe("GET api/articles/:article_id", () => {
+        test('status:200, responds with a single matching article', () => {
+        const article_id = 3;
+        return request(app)
+            .get(`/api/articles/${article_id}`)
+            .expect(200)
+            .then(({ body }) => {
+            expect(body.article).toEqual({
+                article_id: 3, 
+                title: "Eight pug gifs that remind me of mitch",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "some gifs",
+                created_at: "2020-11-03T09:12:00.000Z",
+                votes: 0,
+            });
+            });
+        });
+        test.only("status 400, responds with Invalid id entered",()=>{
+            return request(app).get('/api/articles/Bad-id')
+            .expect(400)
+            .then(({body})=>{
+                expect(body.msg).toBe("Invalid id entered")
+            })
         })
-      })
-})
+        test("status 404, valid id format entered but no such article",()=>{
+            return request(app).get('/api/articles/75464534')
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Article not found")
+            })
+        })
+    });
+    
+    describe("Error testing", () => {
+            test("status 404 error: invalid path entered", () => {
+            return request(app)
+            .get("/api/bad-endpoint")
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe("invalid path");
+            })
+            })
+        
+    })
 });
