@@ -3,9 +3,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
     else next(err);
 }
 exports.handlePSQL = (err, req, res, next) => {
-    console.log("got to error")
     if (err.code === "22P02") {
-        console.log("detected 22P02")
         res.status(400).send({ msg: "Invalid id entered"})}
     else next(err);
 }

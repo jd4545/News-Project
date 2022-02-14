@@ -14,7 +14,7 @@ beforeEach(()=>{
 
 describe("News app",()=>{
     describe("GET api/topics",()=>{
-        test("status 200 & responds with array of topic objects",()=>{
+        test("status:200, responds with array of topic objects",()=>{
             return request(app)
             .get('/api/topics')
             .expect(200)
@@ -28,16 +28,27 @@ describe("News app",()=>{
                 })
             })
         })
-})
+    })
+    describe("Error testing", () => {
+        test("status 404 error: invalid path entered", () => {
+        return request(app)
+        .get("/api/bad-endpoint")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("invalid path");
+        })
+        })
+    })
+
     describe("GET api/articles/:article_id", () => {
         test('status:200, responds with a single matching article', () => {
         const article_id = 3;
         return request(app)
-            .get(`/api/articles/${article_id}`)
-            .expect(200)
-            .then(({ body }) => {
+        .get(`/api/articles/${article_id}`)
+        .expect(200)
+        .then(({ body }) => {
             expect(body.article).toEqual({
-                article_id: 3, 
+                article_id: 3,
                 title: "Eight pug gifs that remind me of mitch",
                 topic: "mitch",
                 author: "icellusedkars",
@@ -47,7 +58,27 @@ describe("News app",()=>{
             });
             });
         });
-        test.only("status 400, responds with Invalid id entered",()=>{
+        test("status:200, responds with object with expected properties",()=>{
+            const article_id = 5;
+            return request(app)
+            .get(`/api/articles/${article_id}`)
+            .expect(200)
+            .then(({body}) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number)
+                    })
+            )
+            })
+        })
+        test("status 400, responds with Invalid id entered",()=>{
             return request(app).get('/api/articles/Bad-id')
             .expect(400)
             .then(({body})=>{
@@ -62,16 +93,4 @@ describe("News app",()=>{
             })
         })
     });
-    
-    describe("Error testing", () => {
-            test("status 404 error: invalid path entered", () => {
-            return request(app)
-            .get("/api/bad-endpoint")
-            .expect(404)
-            .then(({body}) => {
-                expect(body.msg).toBe("invalid path");
-            })
-            })
-        
-    })
-});
+})
