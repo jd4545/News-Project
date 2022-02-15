@@ -191,12 +191,14 @@ describe("News app",()=>{
             })
         })
     })
-    describe('GET /api/articles', () => {
-        xtest("status:200, responds with array of article objects",()=>{
+    describe.only('GET /api/articles', () => {
+        test("status:200, responds with array of article objects",()=>{
             return request(app)
             .get('/api/articles')
             .expect(200)
-            .then(({body: { articles }}) => {
+            .then(({body}) => {
+                const articles = body.articles
+                console.log(articles)
                 expect(articles).toHaveLength(12);
                 articles.forEach(article => {
                     expect.objectContaining({
@@ -208,6 +210,13 @@ describe("News app",()=>{
                         votes: expect.any(Number)
                     })
                 })
+            })
+        })
+        test("status 200, articles sorted by date descending (i.e. youngest first)",()=>{
+            return request(app).get('/api/articles')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toBeSortedBy("created_at", { descending : true })
             })
         })
     })
