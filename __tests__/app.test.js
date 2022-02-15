@@ -41,23 +41,6 @@ describe("News app",()=>{
     })
 
     describe("GET api/articles/:article_id", () => {
-        test('status:200, responds with a single matching article', () => {
-        const article_id = 3;
-        return request(app)
-        .get(`/api/articles/${article_id}`)
-        .expect(200)
-        .then(({ body }) => {
-            expect(body.article).toEqual({
-                article_id: 3,
-                title: "Eight pug gifs that remind me of mitch",
-                topic: "mitch",
-                author: "icellusedkars",
-                body: "some gifs",
-                created_at: "2020-11-03T09:12:00.000Z",
-                votes: 0,
-            });
-            });
-        });
         test("status:200, responds with object with expected properties",()=>{
             const article_id = 5;
             return request(app)
