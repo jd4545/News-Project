@@ -155,5 +155,25 @@ describe("News app",()=>{
             expect(body.msg).toEqual("Article not found")
         })
     })
+    test('status:400, incorrect format in req.body', () => {
+        const articleUpdate = {inc_votes: "What's up pussycat, Whoaoaoaoh" };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Invalid id entered")
+            })
+    });
+    test('status:400, zero votes in req.body', () => {
+        const articleUpdate = {};
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Invalid id entered")
+            })
+    });
     });
 })
