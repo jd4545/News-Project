@@ -76,4 +76,84 @@ describe("News app",()=>{
             })
         })
     });
+    describe('PATCH /api/articles/:article_id', () => {
+    test('status:200, check article properties have not changed and votes have increased by 1', () => {
+          const articleUpdate = {inc_votes: 1};
+          return request(app)
+            .patch('/api/articles/3')
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: 1
+                    })
+            )
+            })
+    });
+    test('status:200, check votes have decreased by 100', () => {
+        const articleUpdate = {inc_votes: -100};
+        return request(app)
+            .patch('/api/articles/3')
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: -100
+                    })
+            )
+            })
+    });
+    test('status:200, check votes have decreased by 10 on an article with non-zero votes', () => {
+        // article 1 has 100 votes at time of seeding
+        const articleUpdate = {inc_votes: -10};
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: 90
+                    })
+            )
+            })
+    });
+    test("status 400, responds with Invalid id entered",()=>{
+        return request(app).patch('/api/articles/Bad-id')
+        .expect(400)
+        .then(({body})=>{
+            expect(body.msg).toBe("Invalid id entered")
+        })
+    });
+    test("status 404, valid id format entered but no such article",()=>{
+        return request(app).patch('/api/articles/9565737')
+        .expect(404)
+        .then(({body})=>{
+            expect(body.msg).toEqual("Article not found")
+        })
+    })
+    });
 })
