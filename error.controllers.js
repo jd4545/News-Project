@@ -7,6 +7,11 @@ exports.handlePSQL = (err, req, res, next) => {
         res.status(400).send({ msg: "Invalid id entered"})}
     else next(err);
 }
+exports.handleEmptyEntry = (err, req, res, next) => {
+    if (err.code === "23502") {
+        res.status(400).send({ msg: "No input detected"})}
+    else next(err);
+}
 exports.handle500 = (err, req, res, next) => {
     console.log(err);
     res.status(500).send({ msg : "server error"});

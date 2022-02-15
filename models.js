@@ -19,21 +19,24 @@ exports.fetchArticleByID = (park_id) => {
 };
 
 exports.updateArticleById = (article_id, articleInfo) => {
-    return db.query(`SELECT votes FROM articles WHERE article_id = $1;`, [article_id])
-    .then(({rows}) => {
-        if (rows.length === 0) {
-            return Promise.reject({ status: 404, msg: "Article not found"})
-        } else {
-        updatedVotes = rows[0].votes + articleInfo.inc_votes;
         return db.query(`UPDATE articles
-        SET votes = $2 
-        WHERE article_id = $1;`, [article_id, updatedVotes])
+        SET votes = votes + $2 
+        WHERE article_id = $1;`, [article_id, articleInfo.inc_votes])
         .then(({results}) => {
             return db.query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
             .then(({rows}) => {
+                if (rows.length === 0) {
+                    return Promise.reject({ status: 404, msg: "Article not found"})
+                } 
                 return rows[0];
             })
         })
-    }
+};
+
+exports.fetchUsers = () =>{
+    return db.query(`
+    SELECT username FROM users;
+    `).then((results)=>{
+        return results.rows
     })
 };

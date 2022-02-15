@@ -172,8 +172,43 @@ describe("News app",()=>{
             .send(articleUpdate)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("Invalid id entered")
+                expect(body.msg).toBe("No input detected")
             })
     });
     });
+    describe('GET /api/users', () => {
+        test("status:200, responds with array of user objects with username",()=>{
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({body: { users }}) => {
+                expect(users).toHaveLength(4);
+                users.forEach(user => {
+                    expect.objectContaining({
+                        username: expect.any(String)
+                    })
+                })
+            })
+        })
+    })
+    describe('GET /api/articles', () => {
+        xtest("status:200, responds with array of article objects",()=>{
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body: { articles }}) => {
+                expect(articles).toHaveLength(12);
+                articles.forEach(article => {
+                    expect.objectContaining({
+                        author: expect.any(String), 
+                        title: expect.any(String), 
+                        article_id: expect.any(Number), 
+                        topic: expect.any(String), 
+                        created_at: expect.any(String), 
+                        votes: expect.any(Number)
+                    })
+                })
+            })
+        })
+    })
 })
