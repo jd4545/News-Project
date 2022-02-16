@@ -61,7 +61,7 @@ describe("News app",()=>{
             )
             })
         })
-        test("status 400, responds with Invalid id entered",()=>{
+        test("status 400, responds with Bad request",()=>{
             return request(app).get('/api/articles/Bad-id')
             .expect(400)
             .then(({body})=>{
@@ -141,7 +141,7 @@ describe("News app",()=>{
             )
             })
     });
-    test("status 400, responds with Invalid id entered",()=>{
+    test("status 400, responds with Bad Request",()=>{
         return request(app).patch('/api/articles/Bad-id')
         .expect(400)
         .then(({body})=>{
