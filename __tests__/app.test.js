@@ -220,7 +220,7 @@ describe("News app",()=>{
             })
         })
     })
-    describe.only('GET /api/articles/:article_id/comments', () => {
+    describe('GET /api/articles/:article_id/comments', () => {
         test("status:200, responds with array of comment objects",()=>{
             const article_id = 9;
             return request(app)
