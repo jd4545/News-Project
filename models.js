@@ -40,3 +40,13 @@ exports.fetchUsers = () =>{
         return results.rows
     })
 };
+
+exports.fetchArticles = () => {
+    return db.query(`
+    SELECT author, title, article_id, topic, created_at, votes FROM articles
+    ORDER BY created_at DESC;
+    `).then((results)=>{
+        // console.log(results.rows)
+        return results.rows
+    })
+}

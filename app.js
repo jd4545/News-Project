@@ -14,7 +14,7 @@ app.patch('/api/articles/:article_id', patchArticleById);
 
 app.get('/api/users', getUsers);
 
-app.get('/api/users', getArticles);
+app.get('/api/articles', getArticles);
 
 //========ERRORS:==========
 
