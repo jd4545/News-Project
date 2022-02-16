@@ -61,11 +61,11 @@ describe("News app",()=>{
             )
             })
         })
-        test("status 400, responds with Invalid id entered",()=>{
+        test("status 400, responds with Bad request",()=>{
             return request(app).get('/api/articles/Bad-id')
             .expect(400)
             .then(({body})=>{
-                expect(body.msg).toBe("Invalid id entered")
+                expect(body.msg).toBe("Bad Request")
             })
         })
         test("status 404, valid id format entered but no such article",()=>{
@@ -76,4 +76,139 @@ describe("News app",()=>{
             })
         })
     });
+    describe('PATCH /api/articles/:article_id', () => {
+    test('status:200, check article properties have not changed and votes have increased by 1', () => {
+          const articleUpdate = {inc_votes: 1};
+          return request(app)
+            .patch('/api/articles/3')
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: 1
+                    })
+            )
+            })
+    });
+    test('status:200, check votes have decreased by 100', () => {
+        const articleUpdate = {inc_votes: -100};
+        return request(app)
+            .patch('/api/articles/3')
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: -100
+                    })
+            )
+            })
+    });
+    test('status:200, check votes have decreased by 10 on an article with non-zero votes', () => {
+        // article 1 has 100 votes at time of seeding
+        const articleUpdate = {inc_votes: -10};
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: 90
+                    })
+            )
+            })
+    });
+    test("status 400, responds with Bad Request",()=>{
+        return request(app).patch('/api/articles/Bad-id')
+        .expect(400)
+        .then(({body})=>{
+            expect(body.msg).toBe("Bad Request")
+        })
+    });
+    test("status 404, valid id format entered but no such article",()=>{
+        return request(app).patch('/api/articles/9565737')
+        .expect(404)
+        .then(({body})=>{
+            expect(body.msg).toEqual("Article not found")
+        })
+    })
+    test('status:400, incorrect format in req.body', () => {
+        const articleUpdate = {inc_votes: "What's up pussycat, Whoaoaoaoh" };
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request")
+            })
+    });
+    test('status:400, zero votes in req.body', () => {
+        const articleUpdate = {};
+        return request(app)
+            .patch('/api/articles/1')
+            .send(articleUpdate)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("No input detected")
+            })
+    });
+    });
+    describe('GET /api/users', () => {
+        test("status:200, responds with array of user objects with username",()=>{
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({body: { users }}) => {
+                expect(users).toHaveLength(4);
+                users.forEach(user => {
+                    expect.objectContaining({
+                        username: expect.any(String)
+                    })
+                })
+            })
+        })
+    })
+    describe('GET /api/articles', () => {
+        xtest("status:200, responds with array of article objects",()=>{
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body: { articles }}) => {
+                expect(articles).toHaveLength(12);
+                articles.forEach(article => {
+                    expect.objectContaining({
+                        author: expect.any(String), 
+                        title: expect.any(String), 
+                        article_id: expect.any(Number), 
+                        topic: expect.any(String), 
+                        created_at: expect.any(String), 
+                        votes: expect.any(Number)
+                    })
+                })
+            })
+        })
+    })
 })
