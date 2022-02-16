@@ -65,7 +65,7 @@ describe("News app",()=>{
             return request(app).get('/api/articles/Bad-id')
             .expect(400)
             .then(({body})=>{
-                expect(body.msg).toBe("Invalid id entered")
+                expect(body.msg).toBe("Bad Request")
             })
         })
         test("status 404, valid id format entered but no such article",()=>{
@@ -145,7 +145,7 @@ describe("News app",()=>{
         return request(app).patch('/api/articles/Bad-id')
         .expect(400)
         .then(({body})=>{
-            expect(body.msg).toBe("Invalid id entered")
+            expect(body.msg).toBe("Bad Request")
         })
     });
     test("status 404, valid id format entered but no such article",()=>{
@@ -162,7 +162,7 @@ describe("News app",()=>{
             .send(articleUpdate)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("Invalid id entered")
+                expect(body.msg).toBe("Bad Request")
             })
     });
     test('status:400, zero votes in req.body', () => {
