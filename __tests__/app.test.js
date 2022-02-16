@@ -75,6 +75,26 @@ describe("News app",()=>{
                 expect(body.msg).toEqual("Article not found")
             })
         })
+        test("REFACTOR: status:200, responds with comment count",()=>{
+            const article_id = 9;
+            return request(app)
+            .get(`/api/articles/${article_id}`)
+            .expect(200)
+            .then(({body}) => {
+                const article = body.article;
+                expect(article.comment_count).toBe("2")
+            })
+        })
+        test("REFACTOR: status:200, second test responds with comment count",()=>{
+            const article_id = 2;
+            return request(app)
+            .get(`/api/articles/${article_id}`)
+            .expect(200)
+            .then(({body}) => {
+                const article = body.article;
+                expect(article.comment_count).toBe("0")
+            })
+        })
     });
     describe('PATCH /api/articles/:article_id', () => {
     test('status:200, check article properties have not changed and votes have increased by 1', () => {
@@ -198,7 +218,6 @@ describe("News app",()=>{
             .expect(200)
             .then(({body}) => {
                 const articles = body.articles
-                console.log(articles)
                 expect(articles).toHaveLength(12);
                 articles.forEach(article => {
                     expect.objectContaining({
