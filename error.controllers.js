@@ -4,7 +4,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
 }
 exports.handlePSQL = (err, req, res, next) => {
     if (err.code === "22P02") {
-        res.status(400).send({ msg: "Invalid id entered"})}
+        res.status(400).send({ msg: "Bad Request"})}
     else next(err);
 }
 exports.handleEmptyEntry = (err, req, res, next) => {
