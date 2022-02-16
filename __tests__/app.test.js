@@ -86,13 +86,13 @@ describe("News app",()=>{
             })
         })
         test("REFACTOR: status:200, second test responds with comment count",()=>{
-            const article_id = 1;
+            const article_id = 2;
             return request(app)
             .get(`/api/articles/${article_id}`)
             .expect(200)
             .then(({body}) => {
                 const article = body.article;
-                expect(article.comment_count).toBe("11")
+                expect(article.comment_count).toBe("0")
             })
         })
     });
