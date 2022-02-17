@@ -198,7 +198,6 @@ describe("News app",()=>{
             .expect(200)
             .then(({body}) => {
                 const articles = body.articles
-                console.log(articles)
                 expect(articles).toHaveLength(12);
                 articles.forEach(article => {
                     expect.objectContaining({
@@ -227,8 +226,27 @@ describe("News app",()=>{
             .get(`/api/articles/${article_id}/comments`)
             .expect(200)
             .then(({body}) => {
-                const comments = body.comments
+                const comments = body.comments;
                 expect(comments).toHaveLength(2);
+                comments.forEach(comment => {
+                    expect.objectContaining({
+                        comment_id: expect.any(String),
+                        votes: expect.any(Number),  
+                        created_at: expect.any(String), 
+                        author: expect.any(String), 
+                        body: expect.any(String)
+                    })
+                })
+            })
+        })
+        test("status:200, responds with empty array for article with no comments",()=>{
+            const article_id = 2;
+            return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(200)
+            .then(({body}) => {
+                const comments = body.comments
+                expect(comments).toHaveLength(0);
                 comments.forEach(comment => {
                     expect.objectContaining({
                         comment_id: expect.any(String),
