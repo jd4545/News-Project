@@ -1,6 +1,6 @@
 const express = require('express');
 const {handleInvalidEndpoint, handlePSQL, handleCustomErrors, handle500, handleEmptyEntry} = require('./error.controllers');
-const {getTopics, getArticleById, patchArticleById, getUsers, getArticles} = require('./controllers');
+const {getTopics, getArticleById, patchArticleById, getUsers, getArticles, getComments} = require('./controllers');
 
 const app = express();
 
@@ -15,6 +15,8 @@ app.patch('/api/articles/:article_id', patchArticleById);
 app.get('/api/users', getUsers);
 
 app.get('/api/articles', getArticles);
+
+app.get('/api/articles/:article_id/comments', getComments)
 
 //========ERRORS:==========
 

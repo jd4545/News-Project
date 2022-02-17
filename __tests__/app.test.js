@@ -239,4 +239,58 @@ describe("News app",()=>{
             })
         })
     })
+    describe('GET /api/articles/:article_id/comments', () => {
+        test("status:200, responds with array of comment objects",()=>{
+            const article_id = 9;
+            return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(200)
+            .then(({body}) => {
+                const comments = body.comments;
+                expect(comments).toHaveLength(2);
+                comments.forEach(comment => {
+                    expect.objectContaining({
+                        comment_id: expect.any(String),
+                        votes: expect.any(Number),  
+                        created_at: expect.any(String), 
+                        author: expect.any(String), 
+                        body: expect.any(String)
+                    })
+                })
+            })
+        })
+        test("status:200, responds with empty array for article with no comments",()=>{
+            const article_id = 2;
+            return request(app)
+            .get(`/api/articles/${article_id}/comments`)
+            .expect(200)
+            .then(({body}) => {
+                const comments = body.comments
+                expect(comments).toHaveLength(0);
+                comments.forEach(comment => {
+                    expect.objectContaining({
+                        comment_id: expect.any(String),
+                        votes: expect.any(Number),  
+                        created_at: expect.any(String), 
+                        author: expect.any(String), 
+                        body: expect.any(String)
+                    })
+                })
+            })
+        })
+        test("status 400, responds with Bad request",()=>{
+            return request(app).get('/api/articles/Bad-id/comments')
+            .expect(400)
+            .then(({body})=>{
+                expect(body.msg).toBe("Bad Request")
+            })
+        })
+        test("status 404, valid id format entered but no such article",()=>{
+            return request(app).get('/api/articles/75464534/comments')
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Article not found")
+            })
+        })
+    })
 })
