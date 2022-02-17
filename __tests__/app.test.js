@@ -238,5 +238,28 @@ describe("News app",()=>{
                 expect(articles).toBeSortedBy("created_at", { descending : true })
             })
         })
+        test.only("REFACTOR: status:200, now also responds with comment count",()=>{
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles
+                expect(articles).toHaveLength(12);
+                articles.forEach(article => {
+                    expect.objectContaining({
+                        comment_count: expect.any(Number)
+                    })
+                })
+            })
+        })
+        test.only("REFACTOR: status:200, checks right count",()=>{
+            return request(app)
+            .get(`/api/articles/`)
+            .expect(200)
+            .then(({body}) => {
+                const article = body.article;
+                expect(article.comment_count).toBe("2")
+            })
+        })
     })
 })
