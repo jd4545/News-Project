@@ -57,7 +57,7 @@ exports.fetchArticles = () => {
     GROUP BY articles.article_id 
     ORDER BY created_at DESC;
     `).then((results)=>{
-        console.log(results.rows)
+       // console.log(results.rows)
         return results.rows
     })
 }
