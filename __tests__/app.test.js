@@ -336,7 +336,6 @@ describe("News app",()=>{
                 .then(({ body }) => {
                     expect(body.comment).toEqual(
                         expect.objectContaining({
-                            article_id: expect.any(Number),
                             author: "icellusedkars", 
                             body: `Do you know what cells used kars pal? recursive fn (Waxon/Waxoff-increases shininess-base case car sells)`,
                             article_id: 1,
@@ -346,7 +345,7 @@ describe("News app",()=>{
                       );
                 })
         });
-        test("status 400, responds with Bad Request",()=>{
+        test("status 400, incorrect article_id format is entered",()=>{
             const newComment = {
                 username: "icellusedkars",
                 body: "I want to do what I want to do"   

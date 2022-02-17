@@ -1,6 +1,6 @@
 const express = require('express');
 const {handleInvalidEndpoint, handlePSQL, handleCustomErrors, handle500,
-     handleEmptyEntry, handleInvalidArticleIdComment} = require('./error.controllers');
+     handleEmptyEntry} = require('./error.controllers');
 const {getTopics, getArticleById, patchArticleById, getUsers, getArticles,
      getComments, postComment} = require('./controllers');
 
@@ -28,7 +28,7 @@ app.all("/*", handleInvalidEndpoint);
 app.use(handleCustomErrors);
 app.use(handlePSQL);
 app.use(handleEmptyEntry);
-app.use(handleInvalidArticleIdComment);
+// app.use(handleInvalidArticleIdComment);
 app.use(handle500);
 
 module.exports = app;
