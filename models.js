@@ -48,10 +48,16 @@ exports.fetchUsers = () =>{
 
 exports.fetchArticles = () => {
     return db.query(`
-    SELECT author, title, article_id, topic, created_at, votes FROM articles
+    SELECT articles.author, articles.title, articles.article_id, 
+    articles.topic, articles.created_at, articles.votes, 
+    COUNT(comments.article_id) AS comment_count 
+    FROM articles
+    LEFT JOIN comments
+    ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id 
     ORDER BY created_at DESC;
     `).then((results)=>{
-        // console.log(results.rows)
+       // console.log(results.rows)
         return results.rows
     })
 }

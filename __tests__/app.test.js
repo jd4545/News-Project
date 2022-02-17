@@ -211,7 +211,7 @@ describe("News app",()=>{
             })
         })
     })
-    describe('GET /api/articles', () => {
+    describe.only('GET /api/articles', () => {
         test("status:200, responds with array of article objects",()=>{
             return request(app)
             .get('/api/articles')
@@ -236,6 +236,35 @@ describe("News app",()=>{
             .expect(200)
             .then(({body: {articles}})=>{
                 expect(articles).toBeSortedBy("created_at", { descending : true })
+            })
+        })
+        test("REFACTOR: status:200, now also responds with comment count",()=>{
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles
+                expect(articles).toHaveLength(12);
+                articles.forEach(article => {
+                    expect.objectContaining({
+                        comment_count: expect.any(Number)
+                    })
+                })
+            })
+        })
+        test("REFACTOR: status:200, checks right count assigned to article 1",()=>{
+            // filtering on returned array where article id === 1 to ensure
+            // correct comment count assigned and sent to client
+            return request(app)
+            .get(`/api/articles/`)
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                const result = articles.filter(article => {
+                    return article.article_id === 1
+                })
+                console.log(result)
+                expect(result[0].comment_count).toBe("11")
             })
         })
     })
