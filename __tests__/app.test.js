@@ -211,7 +211,7 @@ describe("News app",()=>{
             })
         })
     })
-    describe.only('GET /api/articles', () => {
+    describe('GET /api/articles', () => {
         test("status:200, responds with array of article objects",()=>{
             return request(app)
             .get('/api/articles')
@@ -321,5 +321,108 @@ describe("News app",()=>{
                 expect(body.msg).toEqual("Article not found")
             })
         })
+    })
+    describe('POST /api/articles/:article_id/comments', () => {
+        test('status:201, responds with article newly added to the database', () => {
+            const newComment = {
+                username: "icellusedkars",
+                body: "Do you know what cells used kars pal? recursive fn (Waxon/Waxoff-increases shininess-base case car sells)"   
+                };
+            const article_id = 1;
+            return request(app)
+                .post(`/api/articles/${article_id}/comments`)
+                .send(newComment)
+                .expect(201)
+                .then(({ body }) => {
+                    expect(body.comment).toEqual(
+                        expect.objectContaining({
+                            article_id: expect.any(Number),
+                            author: "icellusedkars", 
+                            body: `Do you know what cells used kars pal? recursive fn (Waxon/Waxoff-increases shininess-base case car sells)`,
+                            article_id: 1,
+                            created_at: expect.any(String),
+                            votes: 0
+                        })
+                      );
+                })
+        });
+        test("status 400, responds with Bad Request",()=>{
+            const newComment = {
+                username: "icellusedkars",
+                body: "I want to do what I want to do"   
+                };
+            return request(app)
+            .post('/api/articles/Bad-id/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body})=>{
+                expect(body.msg).toBe("Bad Request")
+            })
+        });
+        test("status 404, valid id format entered but no such article",()=>{
+            const newComment = {
+                username: "icellusedkars",
+                body: "Leant on keypad for a bit"   
+                };
+            return request(app)
+            .post('/api/articles/1596577/comments')
+            .send(newComment)
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Not found")
+            })
+        })
+        test('status:400, empty object in req.body', () => {
+            //23503 Foreign key error
+            const newComment = {};
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Bad Request")
+            })
+        });
+        test('status:404, username does not exist', () => {
+            //23503 Foreign key error
+            const newComment = {
+                username: "the interloper",
+                body: " fjhfhfjkfjkfj ffpjffj fjfpj"
+            };
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Not found")
+            })
+        });
+        test('status:404, empty username', () => {
+            //23503 Foreign key error
+            const newComment = {
+                username: "",
+                body: " The silent type"
+            };
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Not found")
+            })
+        });
+        test('status:400, empty comment', () => {
+            const newComment = {
+                username: "icellusedkars",
+                body: ""
+            };
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Bad Request")
+            })
+        });
     })
 })
