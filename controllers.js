@@ -1,5 +1,5 @@
-const {fetchTopics, fetchArticleByID, updateArticleById, 
-    fetchUsers, fetchArticles, fetchComments, checkArticleExists}
+const {fetchTopics, fetchArticleByID, updateArticleById, fetchUsers, 
+    fetchArticles, fetchComments, checkArticleExists, createComment}
      = require('./models')
 
 exports.getTopics = (req, res, next) => {
@@ -52,3 +52,12 @@ Promise.all([fetchComments(article_id), checkArticleExists(article_id)])
     })
     .catch(next);
 };
+
+exports.postComment = (req, res, next) => {
+    const { article_id } = req.params;
+    const commentInfo = req.body;
+    createComment(article_id, commentInfo).then((comment) => {
+      res.status(201).send({comment})
+    })
+    .catch(next);
+}

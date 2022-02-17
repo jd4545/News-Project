@@ -10,8 +10,11 @@ exports.handlePSQL = (err, req, res, next) => {
 exports.handleEmptyEntry = (err, req, res, next) => {
     if (err.code === "23502") {
         res.status(400).send({ msg: "No input detected"})}
+    else if (err.code === "23503") {
+            res.status(404).send({ msg: "Not found"})}
     else next(err);
 }
+
 exports.handle500 = (err, req, res, next) => {
     console.log(err);
     res.status(500).send({ msg : "server error"});

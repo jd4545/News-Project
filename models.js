@@ -83,3 +83,21 @@ exports.fetchComments = (article_id) => {
         return results.rows
     })
 }
+
+exports.createComment = (article_id, commentInfo) => {
+    if (Object.keys(commentInfo).length === 0) {
+        return Promise.reject({ status: 400, msg: "Bad Request"})
+    } else if (commentInfo.body === "") {
+        return Promise.reject({ status: 400, msg: "Bad Request"})
+    }
+
+    return db.query(`INSERT INTO comments 
+    (author, body, article_id)
+    VALUES 
+    ($1, $2, $3) RETURNING *;`, 
+    [commentInfo.username, commentInfo.body, article_id])
+    .then((results) =>{
+        // console.log(results.rows)
+        return results.rows[0];
+    })
+};
