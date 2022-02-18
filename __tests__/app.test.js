@@ -263,8 +263,70 @@ describe("News app",()=>{
                 const result = articles.filter(article => {
                     return article.article_id === 1
                 })
-                console.log(result)
                 expect(result[0].comment_count).toBe("11")
+            })
+        })
+        test("REFACTOR2: status 200, articles default sorted by date descending",()=>{
+            return request(app).get('/api/articles')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toBeSortedBy("created_at", { descending: true})
+            })
+        })
+        test("REFACTOR2: status 200, allow user to sort on greenlisted fields",()=>{
+            return request(app).get('/api/articles?sort_by=votes')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toBeSortedBy("votes", { descending: true})
+            })
+        })
+        test("REFACTOR2: status 400, prevent user to sort on non-greenlisted fields",()=>{
+            return request(app).get('/api/articles?sort_by=body')
+            .expect(400)
+            .then(({body: {msg}})=>{
+                expect(msg).toBe("Bad Request")
+            })
+        })
+        test("REFACTOR2: status 400, user attempts to sort by column that does not exist",()=>{
+            return request(app).get('/api/articles?sort_by=legs')
+            .expect(400)
+            .then(({body: {msg}})=>{
+                expect(msg).toBe("Bad Request")
+            })
+        })
+        test("REFACTOR2: status 200, allow user to set order to ascending",()=>{
+            return request(app).get('/api/articles?sort_by=votes&order=ASC')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toBeSortedBy("votes", { descending: false})
+            })
+        })
+        test("REFACTOR2: status 400, order set to invalid value",()=>{
+            return request(app).get('/api/articles?sort_by=votes&order=sometimesupsometimesdown')
+            .expect(400)
+            .then(({body: {msg}})=>{
+                expect(msg).toBe("Bad Request")
+            })
+        })
+        test("REFACTOR2: status 200, accepts topic filter query",()=>{
+            return request(app).get('/api/articles?topic=cats')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toHaveLength(1)
+            })
+        })
+        test("REFACTOR2: status 404, topic does not exist",()=>{
+            return request(app).get('/api/articles?topic=marmalade')
+            .expect(404)
+            .then(({body: {msg}})=>{
+                expect(msg).toBe("Topic not found")
+            })
+        })
+        test("REFACTOR2: status 200, topic exists but has zero associated articles",()=>{
+            return request(app).get('/api/articles?topic=paper')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toEqual([])
             })
         })
     })
@@ -359,6 +421,7 @@ describe("News app",()=>{
             })
         });
         test("status 404, valid id format entered but no such article",()=>{
+            // BROKEN
             const newComment = {
                 username: "icellusedkars",
                 body: "Leant on keypad for a bit"   
@@ -372,7 +435,6 @@ describe("News app",()=>{
             })
         })
         test('status:400, empty object in req.body', () => {
-            //23503 Foreign key error
             const newComment = {};
             return request(app)
             .post('/api/articles/1/comments')
@@ -383,7 +445,7 @@ describe("News app",()=>{
             })
         });
         test('status:404, username does not exist', () => {
-            //23503 Foreign key error
+            //23503 Foreign key error BROKEN
             const newComment = {
                 username: "the interloper",
                 body: " fjhfhfjkfjkfj ffpjffj fjfpj"
@@ -397,7 +459,7 @@ describe("News app",()=>{
             })
         });
         test('status:404, empty username', () => {
-            //23503 Foreign key error
+            //23503 Foreign key error BROKEN
             const newComment = {
                 username: "",
                 body: " The silent type"

@@ -5,16 +5,14 @@ exports.handleCustomErrors = (err, req, res, next) => {
 exports.handlePSQL = (err, req, res, next) => {
     if (err.code === "22P02") {
         res.status(400).send({ msg: "Bad Request"})}
-    else next(err);
-}
-exports.handleEmptyEntry = (err, req, res, next) => {
-    if (err.code === "23502") {
+    else if (err.code === "23502") {
         res.status(400).send({ msg: "No input detected"})}
     else if (err.code === "23503") {
-            res.status(404).send({ msg: "Not found"})}
+        res.status(404).send({ msg: "Not found"})}
+    else if (err.code === "42601") {
+        res.status(400).send({ msg: "Bad Request"})}
     else next(err);
 }
-
 exports.handle500 = (err, req, res, next) => {
     console.log(err);
     res.status(500).send({ msg : "server error"});
