@@ -520,4 +520,25 @@ describe("News app",()=>{
             })
         })
     }) 
+    describe("GET api",()=>{
+        test("status:200, responds with endpoint objects",()=>{
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({body}) => {
+            expect(body.description).toEqual(
+                expect.objectContaining({
+                "GET /api": expect.any(Object),
+                "GET /api/topics": expect.any(Object),
+                "GET /api/articles": expect.any(Object),
+                "GET /api/users": expect.any(Object),
+                "GET /api/articles/:article_id": expect.any(Object),
+                "GET /api/articles/:article_id/comments": expect.any(Object),
+                "PATCH /api/articles/:article_id": expect.any(Object),
+                "POST /api/articles/:article_id/comments": expect.any(Object),
+                "DELETE /api/comments/:comment_id": expect.any(Object)
+                }))   
+            })
+        })
+    })
 })
