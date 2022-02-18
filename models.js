@@ -1,4 +1,6 @@
-const db = require('./db/connection')
+const { query } = require('./db/connection');
+const db = require('./db/connection');
+const { push } = require('./db/data/test-data/articles');
 
 exports.fetchTopics = () =>{
     return db.query(`
@@ -46,21 +48,47 @@ exports.fetchUsers = () =>{
     })
 };
 
-exports.fetchArticles = () => {
-    return db.query(`
-    SELECT articles.author, articles.title, articles.article_id, 
+exports.fetchArticles = (sortBy="created_at", order="DESC", topic) => {
+    const greenList = ["created_at", "title", "votes", "author"]
+    if (!greenList.includes(sortBy)){
+        return Promise.reject({ status: 400, msg: "Bad Request"})
+     }
+    let queryString = `SELECT articles.author, articles.title, articles.article_id, 
     articles.topic, articles.created_at, articles.votes, 
     COUNT(comments.article_id) AS comment_count 
     FROM articles
     LEFT JOIN comments
-    ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id 
-    ORDER BY created_at DESC;
-    `).then((results)=>{
-       // console.log(results.rows)
+    ON articles.article_id = comments.article_id`
+    const queryValues = [];
+    if(topic) {
+        return db.query(`
+        SELECT * FROM topics WHERE slug = $1;
+        `, [topic])
+        .then(({rows}) => {
+            if(rows.length === 0) {
+                return Promise.reject({ status: 404, msg: "Topic not found"})
+            }
+            queryValues.push(topic);
+            queryString += ` WHERE topic = $1`
+        })
+        .then(() => {
+            queryString += ` GROUP BY articles.article_id 
+            ORDER BY ${sortBy} ${order};`
+            return db.query(queryString, queryValues)
+        })
+        .then((results)=>{
+            return results.rows
+        })
+    }
+        queryString += ` GROUP BY articles.article_id 
+        ORDER BY ${sortBy} ${order};`
+        return db.query(queryString)
+    .then((results)=>{
         return results.rows
     })
 }
+    
+  
 
 exports.checkArticleExists = (article_id) => {
     return db.query(`
@@ -79,7 +107,6 @@ exports.fetchComments = (article_id) => {
     FROM comments 
     WHERE article_id = $1;`, [article_id])
     .then((results)=>{
-        // console.log(results.rows, "in model")
         return results.rows
     })
 }
@@ -90,14 +117,12 @@ exports.createComment = (article_id, commentInfo) => {
     } else if (commentInfo.body === "") {
         return Promise.reject({ status: 400, msg: "Bad Request"})
     }
-
     return db.query(`INSERT INTO comments 
     (author, body, article_id)
     VALUES 
     ($1, $2, $3) RETURNING *;`, 
     [commentInfo.username, commentInfo.body, article_id])
     .then((results) =>{
-        // console.log(results.rows)
         return results.rows[0];
     })
 };
