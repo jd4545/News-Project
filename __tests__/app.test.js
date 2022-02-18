@@ -497,4 +497,27 @@ describe("News app",()=>{
             })
         });
     })
+    describe('DELETE /api/comments/:comment_id', () => {
+        test('status:204, responds with an empty response body', () => {
+          return request(app).delete('/api/comments/2')
+          .expect(204)
+          .then(({body})=>{
+              expect(body).toEqual({})
+          })
+        })
+        test("status 400, client attempts to delete comment with Bad id: responds with Bad request",()=>{
+            return request(app).delete('/api/comments/Bad-id')
+            .expect(400)
+            .then(({body})=>{
+                expect(body.msg).toBe("Bad Request")
+            })
+        })
+        test("status 404, valid id format entered but no such comment",()=>{
+            return request(app).delete('/api/comments/5464534')
+            .expect(404)
+            .then(({body})=>{
+                expect(body.msg).toEqual("Comment not found")
+            })
+        })
+    }) 
 })
