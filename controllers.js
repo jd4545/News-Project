@@ -3,6 +3,8 @@ const {fetchTopics, fetchArticleByID, updateArticleById, fetchUsers,
     removeComment }
      = require('./models')
 
+const endPoints = require('./endpoints.json');
+
 exports.getTopics = (req, res, next) => {
     fetchTopics()
     .then((topics)=>{
@@ -74,3 +76,9 @@ exports.deleteComment = (req, res, next) => {
     })
     .catch(next);
   };
+
+exports.describeEndpoints = (req, res, next) => {
+    const description = endPoints;
+    res.status(200).send({description})
+    .catch(next);
+  }

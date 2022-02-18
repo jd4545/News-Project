@@ -1,17 +1,17 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "delivers a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "delivers an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "delivers an array of all topics",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -22,6 +22,78 @@
           "created_at": 1527695953341
         }
       ]
+    }
+  },
+  "GET /api/users": {
+    "description": "delivers an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [{"username": "icellusedkars" }]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "delivers an individual article",
+    "parametric endpoint": ["article_id"],
+    "exampleResponse": {
+      "article": [{
+        "title": "Seafood substitutions are decreasing",
+        "topic": "cooking",
+        "author": "butter_bridge",
+        "body": "Text from the article..",
+        "created_at": 1527695953342
+      }]
+    }
+  } ,
+  "GET /api/articles/:article_id/comments": {
+    "description": "delivers an array of all comments associated with an article",
+    "parametric endpoint": ["article_id"],
+    "exampleResponse": {
+      "comments": [{
+        "body": "Lobster pot",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 1,
+        "created_at": 1589577540000
+      }]
+    }
+  } ,
+  "PATCH /api/articles/:article_id": {
+    "description": "Allows a client to upvote or downvote for an article, and responds with that article", 
+    "parametric endpoint": ["article_id"],
+    "exampleRequest": { "inc_votes" : 1 },
+    "exampleResponse": {
+      "article": [{
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": 1594329060000,
+        "votes": 100
+      }]
+    }
+  } ,
+  "POST /api/articles/:article_id/comments": {
+    "description": "Allows a user to post a comment associated with an article, and responds with that comment",
+    "parametric endpoint": ["article_id"],
+    "exampleRequest": {
+      "username": "icellusedkars",
+      "body": "I hate streaming eyes even more"   
+      },
+    "exampleResponse": {
+      "comment": [{
+        "body": "I hate streaming eyes even more",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 1,
+        "created_at": 1586642520000
+      }]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Allows a user to delete a comment and responds with empty content",
+    "queries": ["comment_id"],
+    "exampleResponse": {
+      "deleted": [{ }]
     }
   }
 }
