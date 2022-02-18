@@ -273,11 +273,18 @@ describe("News app",()=>{
                 expect(articles).toBeSortedBy("created_at", { descending: true})
             })
         })
-        test("REFACTOR2: status 200, allow user to sort on greenlisted fields",()=>{
+        test("REFACTOR2: status 200, allow user to sort on greenlisted fields: votes",()=>{
             return request(app).get('/api/articles?sort_by=votes')
             .expect(200)
             .then(({body: {articles}})=>{
                 expect(articles).toBeSortedBy("votes", { descending: true})
+            })
+        })
+        test("REFACTOR2: status 200, allow user to sort on greenlisted fields: title",()=>{
+            return request(app).get('/api/articles?sort_by=title')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toBeSortedBy("title", { descending: true})
             })
         })
         test("REFACTOR2: status 400, prevent user to sort on non-greenlisted fields",()=>{
@@ -299,6 +306,13 @@ describe("News app",()=>{
             .expect(200)
             .then(({body: {articles}})=>{
                 expect(articles).toBeSortedBy("votes", { descending: false})
+            })
+        })
+        test("REFACTOR2: status 200, allow user to sort on greenlisted fields: author, ascending",()=>{
+            return request(app).get('/api/articles?sort_by=author&order=ASC')
+            .expect(200)
+            .then(({body: {articles}})=>{
+                expect(articles).toBeSortedBy("author", { descending: false})
             })
         })
         test("REFACTOR2: status 400, order set to invalid value",()=>{
@@ -421,7 +435,6 @@ describe("News app",()=>{
             })
         });
         test("status 404, valid id format entered but no such article",()=>{
-            // BROKEN
             const newComment = {
                 username: "icellusedkars",
                 body: "Leant on keypad for a bit"   
@@ -445,7 +458,6 @@ describe("News app",()=>{
             })
         });
         test('status:404, username does not exist', () => {
-            //23503 Foreign key error BROKEN
             const newComment = {
                 username: "the interloper",
                 body: " fjhfhfjkfjkfj ffpjffj fjfpj"
@@ -459,7 +471,6 @@ describe("News app",()=>{
             })
         });
         test('status:404, empty username', () => {
-            //23503 Foreign key error BROKEN
             const newComment = {
                 username: "",
                 body: " The silent type"
