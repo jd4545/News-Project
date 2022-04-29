@@ -1,10 +1,8 @@
 # Northcoders News API
 
-As part of the Nortcoders programme, I was set the task to create a backend api for a news app.
+As part of the Nortcoders 13-week programme, I was set the task to create a backend api for a news app.
 
 ## Project highlights:
-
-This project comprises the back end for my news app.
 
 - Designed using Javascript, making requests to a PSQL database.
 - Created using test-driven development (TDD) using Jest.
