@@ -1,5 +1,7 @@
 # Northcoders News API
 
+As part of the Nortcoders programme, I was set the task to create a backend api for a news app.
+
 ## Project highlights:
 
 This project comprises the back end for my news app.
@@ -8,6 +10,7 @@ This project comprises the back end for my news app.
 - Created using test-driven development (TDD) using Jest.
 - Organised along the Model-view-controller (MVC) software design pattern.
 - Uses express to interface with SQL for GET/POST/PATCH/DELETE requests
+- Full list of endpoints at /api
 
 ## Instructions for use:
 
